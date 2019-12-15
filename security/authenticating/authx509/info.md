@@ -10,15 +10,14 @@
 
 ## Autenticacion mediante x509 para usuarios normales
 
-Use Case 1: Create User With Limited Namespace Access
-In this example, we will create the following User Account:
+Vamos a crear un usuario 
+Username: antonio
+Group: scm
 
-Username: employee
-Group: bitnami
-We will add the necessary RBAC policies so this user can fully manage deployments (i.e. use kubectl run command) only inside the office namespace. At the end, we will test the policies to make sure they work as expected.
+Vamos a añadir las politicas RBAC necesarias para que un usuario pueda manejar sus deployments en el namespace "developer"
 
-Step 1: Create The Office Namespace
-Execute the kubectl create command to create the namespace (as the admin user):
+
+###1: Create The Office Namespace
 
 kubectl create namespace office
 Step 2: Create The User Credentials
