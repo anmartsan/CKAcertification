@@ -50,48 +50,49 @@ Una vez creado el usuario le tenemos que dar los permisos RBAC necesarios.
 
 
 ### 3: Create The Role For Managing Deployments
-Create a role-deployment-manager.yaml file with the content below. In this yaml file we are creating the rule that allows a user to execute several operations on Deployments, Pods and ReplicaSets (necessary for creating a Deployment), which belong to the core (expressed by “” in the yaml file), apps, and extensions API Groups:
+
 
 ~~~
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  namespace: office
-  name: deployment-manager
+  namespace: developer
+  name: developer-admin
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["deployments", "replicasets", "pods"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
 ~~~
   
-Create the Role in the cluster using the kubectl create role command:
 
-kubectl create -f role-deployment-manager.yaml
-Step 4: Bind The Role To The Employee User
-Create a rolebinding-deployment-manager.yaml file with the content below. In this file, we are binding the deployment-manager Role to the User Account employee inside the office namespace:
+> kubectl create -f developer-admin.yaml
 
+### 4: Bind el  role a antonio role
+
+~~~
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: deployment-manager-binding
-  namespace: office
+  name: developer-admin-binding
+  namespace: developer
 subjects:
 - kind: User
-  name: employee
+  name: antonio
   apiGroup: ""
 roleRef:
   kind: Role
-  name: deployment-manager
+  name: deployment-admin
   apiGroup: ""
-Deploy the RoleBinding by running the kubectl create command:
+  ~~~
 
-kubectl create -f rolebinding-deployment-manager.yaml
-Step 5: Test The RBAC Rule
-Now you should be able to execute the following commands without any issues:
+> kubectl create -f rolebinding-developer-admin.yaml
 
-kubectl --context=employee-context run --image bitnami/dokuwiki mydokuwiki
-kubectl --context=employee-context get pods
-If you run the same command with the --namespace=default argument, it will fail, as the employee user does not have access to this namespace.
+### 5: Test The RBAC Rule
 
-kubectl --context=employee-context get pods --namespace=default
-Now you have created a user with limited permissions in your cluster.
+
+> kubectl --context=antonio-context run --image busybox
+> kubectl --context=antonio-context get pods
+
+
+kubectl --context=antonio-context get pods --namespace=default
+
