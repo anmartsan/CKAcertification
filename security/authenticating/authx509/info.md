@@ -17,33 +17,39 @@ Group: scm
 Vamos a añadir las politicas RBAC necesarias para que un usuario pueda manejar sus deployments en el namespace "developer"
 
 
-###1: Create The Office Namespace
+### 1: Create The Office Namespace
 
-kubectl create namespace office
-Step 2: Create The User Credentials
-As previously mentioned, Kubernetes does not have API Objects for User Accounts. Of the available ways to manage authentication (see Kubernetes official documentation for a complete list), we will use OpenSSL certificates for their simplicity. The necessary steps are:
+kubectl create namespace developer
 
-Create a private key for your user. In this example, we will name the file employee.key:
+### 2: Create The User Credentials
 
-openssl genrsa -out employee.key 2048
-Create a certificate sign request employee.csr using the private key you just created (employee.key in this example). Make sure you specify your username and group in the -subj section (CN is for the username and O for the group). As previously mentioned, we will use employee as the name and bitnami as the group:
+ Kubernetes no tiene API para "User Accounts" . Uno de los metodos para manejar la authorizacion son los certificados.
 
-openssl req -new -key employee.key -out employee.csr -subj "/CN=employee/O=bitnami"
-Locate your Kubernetes cluster certificate authority (CA). This will be responsible for approving the request and generating the necessary certificate to access the cluster API. Its location is normally /etc/kubernetes/pki/. In the case of Minikube, it would be ~/.minikube/. Check that the files ca.crt and ca.key exist in the location.
+Creamos la llave primaria
 
-Generate the final certificate employee.crt by approving the certificate sign request, employee.csr, you made earlier. Make sure you substitute the CA_LOCATION placeholder with the location of your cluster CA. In this example, the certificate will be valid for 500 days:
+openssl genrsa -out antonio.key 2048
 
-openssl x509 -req -in employee.csr -CA CA_LOCATION/ca.crt -CAkey CA_LOCATION/ca.key -CAcreateserial -out employee.crt -days 500
-Save both employee.crt and employee.key in a safe location (in this example we will use /home/employee/.certs/).
+Creamos el CSR , con CN como usuario y O como grupo.
 
-Add a new context with the new credentials for your Kubernetes cluster. This example is for a Minikube cluster but it should be similar for others:
+openssl req -new -key antonio.key -out antonio.csr -subj "/CN=antonio/O=scm"
 
-kubectl config set-credentials employee --client-certificate=/home/employee/.certs/employee.crt  --client-key=/home/employee/.certs/employee.key
-kubectl config set-context employee-context --cluster=minikube --namespace=office --user=employee
-Now you should get an access denied error when using the kubectl CLI with this configuration file. This is expected as we have not defined any permitted operations for this user.
+Utilizaremos el Certificate authority "CA" y su llave privada  de kubernetes. Suelen estar en /etc/kubernetes/pki
 
-kubectl --context=employee-context get pods
-Step 3: Create The Role For Managing Deployments
+
+openssl x509 -req -in antonio.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out antonio.crt -days 500
+
+Tanto el fichero crt y key deberian se guardados en algun lugar seguro. Esto al ser una prueba no es necesario.
+
+Añadimos las credenciales al cluster kubernetes.
+
+
+kubectl config set-credentials antonio --client-certificate=antonio.crt  --client-key=antonio.key
+kubectl config set-context antonio-context --cluster=kubernetes  --namespace=developer --user=antonio
+
+Una vez creado el usuario le tenemos que dar los permisos RBAC necesarios.
+
+
+### 3: Create The Role For Managing Deployments
 Create a role-deployment-manager.yaml file with the content below. In this yaml file we are creating the rule that allows a user to execute several operations on Deployments, Pods and ReplicaSets (necessary for creating a Deployment), which belong to the core (expressed by “” in the yaml file), apps, and extensions API Groups:
 
 kind: Role
