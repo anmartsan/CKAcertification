@@ -27,24 +27,24 @@ kubectl create namespace developer
 
 Creamos la llave primaria
 
-openssl genrsa -out antonio.key 2048
+>openssl genrsa -out antonio.key 2048
 
 Creamos el CSR , con CN como usuario y O como grupo.
 
-openssl req -new -key antonio.key -out antonio.csr -subj "/CN=antonio/O=scm"
+>openssl req -new -key antonio.key -out antonio.csr -subj "/CN=antonio/O=scm"
 
 Utilizaremos el Certificate authority "CA" y su llave privada  de kubernetes. Suelen estar en /etc/kubernetes/pki
 
 
-openssl x509 -req -in antonio.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out antonio.crt -days 500
+>openssl x509 -req -in antonio.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out antonio.crt -days 500
 
 Tanto el fichero crt y key deberian se guardados en algun lugar seguro. Esto al ser una prueba no es necesario.
 
 Añadimos las credenciales al cluster kubernetes.
 
 
-kubectl config set-credentials antonio --client-certificate=antonio.crt  --client-key=antonio.key
-kubectl config set-context antonio-context --cluster=kubernetes  --namespace=developer --user=antonio
+>kubectl config set-credentials antonio --client-certificate=antonio.crt  --client-key=antonio.key
+>kubectl config set-context antonio-context --cluster=kubernetes  --namespace=developer --user=antonio
 
 Una vez creado el usuario le tenemos que dar los permisos RBAC necesarios.
 
