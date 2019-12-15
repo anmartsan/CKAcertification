@@ -52,11 +52,11 @@ Una vez creado el usuario le tenemos que dar los permisos RBAC necesarios.
 ### 3: Create The Role For Managing Deployments
 Create a role-deployment-manager.yaml file with the content below. In this yaml file we are creating the rule that allows a user to execute several operations on Deployments, Pods and ReplicaSets (necessary for creating a Deployment), which belong to the core (expressed by “” in the yaml file), apps, and extensions API Groups:
 
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  namespace: office
-  name: deployment-manager
+>kind: Role
+>apiVersion: rbac.authorization.k8s.io/v1beta1
+>metadata:
+>  namespace: office
+>  name: deployment-manager
 rules:
 - apiGroups: ["", "extensions", "apps"]
   resources: ["deployments", "replicasets", "pods"]
