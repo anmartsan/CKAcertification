@@ -94,5 +94,5 @@ roleRef:
 > kubectl --context=antonio-context get pods
 
 
-kubectl --context=antonio-context get pods --namespace=default
+> kubectl --context=antonio-context get pods --namespace=default
 
