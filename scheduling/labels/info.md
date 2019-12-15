@@ -10,6 +10,8 @@ NAME       READY   STATUS    RESTARTS   AGE     LABELS
 backend    1/1     Running   0          9m23s   tier=backend
 frontend   1/1     Running   0          10m     tier=frontend
 
+~~~
 kubectl get pods --selector="tier=backend"
 kubectl get pods --selector="tier=frontend"
 kubectl get pods --selector="tier in (backend)"
+~~~
