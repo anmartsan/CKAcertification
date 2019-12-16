@@ -1,4 +1,4 @@
-#Static Pods - No Scheduled Pods
+# Static Pods - No Scheduled Pods
 
 Nos conectamos al nodo donde queremos ejecutar el pod estatico.
 
