@@ -17,6 +17,10 @@
 
 ## Taints
 
+~~~
+kubectl taint nodes <node-name> key=value:taint-effect
+~~~
+
 Creamos un taint en el nodo k8s-worker1
 
 ~~~
